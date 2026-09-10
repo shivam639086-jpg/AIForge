@@ -1,0 +1,12 @@
+import { useState } from "react";
+import { Check, Copy, Search, Sparkles } from "lucide-react";
+import { PageFrame, PageHeading } from "@/components/app-shell";
+import { prompts } from "@/data/tools";
+
+export default function Prompts() {
+  const [query, setQuery] = useState("");
+  const [copied, setCopied] = useState("");
+  const filtered = prompts.filter(prompt => `${prompt.title} ${prompt.category} ${prompt.body}`.toLowerCase().includes(query.toLowerCase()));
+  const copy = async (id: string, body: string) => { await navigator.clipboard?.writeText(body); setCopied(id); setTimeout(() => setCopied(""), 1600); };
+  return <PageFrame><PageHeading eyebrow="Field kit / prompt library" title="Prompts with a point of view." description="A small collection of starting lines for the moments when a blank chat window is not enough." action={<div className="relative"><Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search prompts" className="h-10 w-44 rounded-lg border border-white/10 bg-white/[.04] pl-9 pr-3 text-sm outline-none focus:border-secondary/50" aria-label="Search prompts" data-testid="input-prompt-search" /></div>} /><div className="grid gap-4 md:grid-cols-2">{filtered.map((prompt, index) => <article key={prompt.title} className="af-glass af-reveal rounded-2xl p-6" style={{ animationDelay: `${index * 80}ms` }} data-testid={`card-prompt-${index}`}><div className="mb-7 flex items-center justify-between"><span className="rounded-full border border-secondary/20 bg-secondary/[.07] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[.1em] text-secondary">{prompt.category}</span><Sparkles className="size-4 text-primary" /></div><h2 className="af-display text-2xl font-semibold tracking-[-.04em]">{prompt.title}</h2><p className="mt-4 rounded-xl border border-white/[.08] bg-[#081321] p-4 text-sm leading-relaxed text-muted-foreground">“{prompt.body}”</p><button onClick={() => copy(prompt.title, prompt.body)} className="mt-5 flex items-center gap-2 text-sm text-secondary hover:text-foreground" data-testid={`button-copy-prompt-${index}`}>{copied === prompt.title ? <Check className="size-4 text-accent" /> : <Copy className="size-4" />}{copied === prompt.title ? "Copied to clipboard" : "Copy prompt"}</button></article>)}</div></PageFrame>;
+}

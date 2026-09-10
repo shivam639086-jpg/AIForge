@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "AIForge"
+description = "A premium AI tool discovery and stack-building platform that helps students, builders, designers, and founders find the right tools for what they want to create."
+version = "1.0.0"
+id = "artifacts/aiforge"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18570
+
+[services.development]
+run = "pnpm --filter @workspace/aiforge run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/aiforge", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/aiforge/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18570"
+BASE_PATH = "/"
